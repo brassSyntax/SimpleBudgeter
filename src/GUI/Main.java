@@ -8,6 +8,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.time.DayOfWeek;
 
 public class Main {
@@ -86,10 +88,20 @@ public class Main {
         createRecordBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO: fix so that you can open only one window at a time
                 if(editWindow == null)
                 {
                     editWindow = new RecordEditWindow();
+                    createRecordBtn.setEnabled(false);
+
+                    editWindow.addWindowListener(new WindowAdapter() {
+                        @Override
+                        public void windowClosed(WindowEvent e) {
+                            super.windowClosed(e);
+
+                            editWindow = null;
+                            createRecordBtn.setEnabled(true);
+                        }
+                    });
                 }
             }
         });
