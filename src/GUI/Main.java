@@ -46,7 +46,7 @@ public class Main {
         fromDatePicker.setSettings(fromDateSettings);
         untilDatePicker.setSettings(untilDateSettings);
 
-        setUpListeners();
+        setupListeners();
 
         buttonPane = new JPanel();
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
@@ -83,7 +83,7 @@ public class Main {
         frame.setVisible(true);
     }
 
-    public void setUpListeners()
+    public void setupListeners()
     {
         createRecordBtn.addActionListener(new ActionListener() {
             @Override

@@ -35,13 +35,13 @@ public class MainMenuBar extends JMenuBar{
 
         helpMenu.add(aboutItem);
 
-        setUpListeners();
+        setupListeners();
         this.add(fileMenu);
         this.add(statsMenu);
         this.add(helpMenu);
     }
 
-    private void setUpListeners()
+    private void setupListeners()
     {
         this.aboutItem.addActionListener(new ActionListener() {
             @Override

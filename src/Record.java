@@ -5,13 +5,22 @@ public class Record {
 
     private String name;
     private LocalDate date;
+    private RecordType type;
     private double amount;
 
     public Record()
     {
         this.name = "N/A";
         this.date = LocalDateTime.now().toLocalDate();
+        this.type = null;
         this.amount = 0.;
+    }
+
+    public Record(String name, LocalDate date, RecordType type, double amount) {
+        this.name = name;
+        this.date = date;
+        this.type = type;
+        this.amount = amount;
     }
 
     public String getName() {
