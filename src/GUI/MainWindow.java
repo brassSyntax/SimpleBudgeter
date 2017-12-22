@@ -28,7 +28,6 @@ public class MainWindow {
     private JTable recordsTable;
 
     private RecordTableModel tableModel;
-    private RecordEditWindow editWindow;
 
 
     public MainWindow() {
