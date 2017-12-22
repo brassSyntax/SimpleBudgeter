@@ -77,4 +77,9 @@ public class RecordTableModel extends AbstractTableModel{
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return true;
     }
+
+    public void addRecord()
+    {
+        Records.add(new Record());
+    }
 }

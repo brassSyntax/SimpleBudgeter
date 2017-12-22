@@ -6,13 +6,11 @@ import com.github.lgooddatepicker.components.DatePickerSettings;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+
 import java.time.DayOfWeek;
 
 public class MainWindow {
@@ -29,6 +27,7 @@ public class MainWindow {
     private JLabel periodBalance;
     private JTable recordsTable;
 
+    private RecordTableModel tableModel;
     private RecordEditWindow editWindow;
 
 
@@ -66,8 +65,8 @@ public class MainWindow {
         buttonPane.add(balanceLabel);
         buttonPane.setBorder(new EmptyBorder(20,20,20,20));
 
-        RecordTableModel model = new RecordTableModel();
-        recordsTable = new JTable(model);
+        tableModel = new RecordTableModel();
+        recordsTable = new JTable(tableModel);
         TableColumn typeColumn = recordsTable.getColumnModel().getColumn(2);
         JComboBox<RecordType> typeComboBox = new JComboBox<>();
         typeComboBox.addItem(RecordType.SALARY);
@@ -109,21 +108,8 @@ public class MainWindow {
         createRecordBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(editWindow == null)
-                {
-                    editWindow = new RecordEditWindow();
-                    createRecordBtn.setEnabled(false);
+                tableModel.addRecord();
 
-                    editWindow.addWindowListener(new WindowAdapter() {
-                        @Override
-                        public void windowClosed(WindowEvent e) {
-                            super.windowClosed(e);
-
-                            editWindow = null;
-                            createRecordBtn.setEnabled(true);
-                        }
-                    });
-                }
             }
         });
     }

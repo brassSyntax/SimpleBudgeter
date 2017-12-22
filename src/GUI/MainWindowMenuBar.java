@@ -52,6 +52,13 @@ public class MainWindowMenuBar extends JMenuBar{
 
     private void setupListeners()
     {
+        this.newBudgetItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                target.getRecordsTable().setModel(new RecordTableModel());
+            }
+        });
+
         this.loadBudgetItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
