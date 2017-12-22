@@ -1,10 +1,13 @@
 package GUI;
 
+import Record.RecordType;
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +15,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.time.DayOfWeek;
 
-public class Main {
+public class MainWindow {
 
     private JPanel contentPane;
     private JPanel buttonPane;
@@ -29,7 +32,7 @@ public class Main {
     private RecordEditWindow editWindow;
 
 
-    public Main() {
+    public MainWindow() {
         createRecordBtn = new JButton("New Record");
         fromLabel = new JLabel("From:");
         fromDatePicker = new DatePicker();
@@ -63,21 +66,39 @@ public class Main {
         buttonPane.add(balanceLabel);
         buttonPane.setBorder(new EmptyBorder(20,20,20,20));
 
-        recordsTable = new JTable(20,4);
+        RecordTableModel model = new RecordTableModel();
+        recordsTable = new JTable(model);
+        TableColumn typeColumn = recordsTable.getColumnModel().getColumn(2);
+        JComboBox<RecordType> typeComboBox = new JComboBox<>();
+        typeComboBox.addItem(RecordType.SALARY);
+        typeComboBox.addItem(RecordType.INSURANCE);
+        typeComboBox.addItem(RecordType.TAXES);
+        typeComboBox.addItem(RecordType.LEISURE);
+        typeComboBox.addItem(RecordType.SAVINGS);
+        typeComboBox.addItem(RecordType.SUPPLIES);
+        typeComboBox.addItem(RecordType.EMERGENCY);
+        typeColumn.setCellEditor(new DefaultCellEditor(typeComboBox));
         recordsTable.setBorder(new EmptyBorder(5,5,5,5));
 
         contentPane = new JPanel();
         contentPane.setLayout(new BoxLayout(contentPane,BoxLayout.PAGE_AXIS));
         contentPane.add(buttonPane);
-        contentPane.add(recordsTable);
+        contentPane.add(new JScrollPane(recordsTable));
+    }
+
+    public JTable getRecordsTable() {
+        return recordsTable;
     }
 
     public static void main(String[] Args)
     {
         JFrame frame = new JFrame("Simple Budgeter");
-        frame.setContentPane(new Main().contentPane);
-        frame.setJMenuBar(new MainMenuBar());
+        MainWindow gui = new MainWindow();
+        frame.setContentPane(gui.contentPane);
+        frame.setJMenuBar(new MainWindowMenuBar(gui));
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setSize(800,600);
         frame.setMinimumSize(new Dimension (800, 600));
         frame.setVisible(true);

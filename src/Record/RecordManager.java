@@ -1,3 +1,5 @@
+package Record;
+
 import java.util.ArrayList;
 
 public class RecordManager {

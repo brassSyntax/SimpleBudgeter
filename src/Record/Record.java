@@ -1,3 +1,5 @@
+package Record;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -37,6 +39,14 @@ public class Record {
 
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public RecordType getType() {
+        return type;
+    }
+
+    public void setType(RecordType type) {
+        this.type = type;
     }
 
     public double getAmount() {

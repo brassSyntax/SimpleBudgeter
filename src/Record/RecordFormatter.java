@@ -1,3 +1,5 @@
+package Record;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -10,7 +12,7 @@ public class RecordFormatter {
 
     public static ArrayList<Record> toRecordObjects(String str) throws IOException
     {
-        ArrayList<Record> Records = new ArrayList<>();
+        ArrayList<Record> Records = new ArrayList<Record>();
         String[] rawFields = StringUtils.substringsBetween(str,"\"", "\"");
 
         if(rawFields.length % COLUMN_COUNT == 0)
@@ -28,8 +30,6 @@ public class RecordFormatter {
                 amount = Double.parseDouble(rawFields[i+3]);
 
                 Records.add(new Record(name,date,type,amount));
-
-                // TODO: TEST THIS
             }
         }
         else
@@ -38,5 +38,25 @@ public class RecordFormatter {
         }
 
         return Records;
+    }
+
+    public static String toString(ArrayList<Record> list)
+    {
+        StringBuilder text = new StringBuilder();
+
+        for(Record i : list)
+        {
+            text.append("\"").append(i.getName()).append("\";");
+            text.append("\"").append(i.getDate().toString()).append("\";");
+            text.append("\"").append(i.getType().toString()).append("\";");
+            text.append("\"").append(i.getAmount()).append("\";");
+
+            if(i != list.get(list.size() - 1))
+            {
+                text.append("\n");
+            }
+        }
+
+        return text.toString();
     }
 }

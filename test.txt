@@ -1,0 +1,7 @@
+"Monthly salary";"2017-12-21";"SALARY";"300";
+"Car accident payout";"2017-12-22";"INSURANCE";"500";
+"Common utilities";"2017-12-23";"TAXES";"800";
+"New microphone";"2017-12-24";"LEISURE";"100";
+"Monthly savings";"2017-12-25";"SAVINGS";"150.25";
+"Monthly food";"2017-12-26";"SUPPLIES";"200";
+"Doctor visit";"2017-12-27";"EMERGENCY";"364.01";

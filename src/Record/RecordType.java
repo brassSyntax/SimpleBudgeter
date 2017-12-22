@@ -1,3 +1,5 @@
+package Record;
+
 public enum RecordType {
     SALARY      (1),
     INSURANCE   (1),
