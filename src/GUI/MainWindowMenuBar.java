@@ -69,6 +69,8 @@ public class MainWindowMenuBar extends JMenuBar{
             public void actionPerformed(ActionEvent e) {
                 final JFileChooser fc = new JFileChooser();
                 fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
+                fc.setDialogType(JFileChooser.OPEN_DIALOG);
+                fc.setFileFilter(new FileNameExtensionFilter("Text File", "txt"));
 
                 int returnVal = fc.showOpenDialog(MainWindowMenuBar.this);
                 File file = fc.getSelectedFile();
