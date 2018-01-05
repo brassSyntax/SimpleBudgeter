@@ -3,6 +3,7 @@ package GUI;
 import Record.RecordType;
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
+import com.github.lgooddatepicker.tableeditors.DateTableEditor;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -12,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 
 public class MainWindow {
 
@@ -66,6 +68,13 @@ public class MainWindow {
 
         tableModel = new RecordTableModel();
         recordsTable = new JTable(tableModel);
+        recordsTable.setDefaultEditor(LocalDate.class, new DateTableEditor());
+        recordsTable.setDefaultRenderer(LocalDate.class, new DateTableEditor());
+
+        TableColumn dateColumn = recordsTable.getColumnModel().getColumn(1);
+        dateColumn.setCellEditor(recordsTable.getDefaultEditor(LocalDate.class));
+        dateColumn.setCellRenderer(recordsTable.getDefaultRenderer(LocalDate.class));
+
         TableColumn typeColumn = recordsTable.getColumnModel().getColumn(2);
         JComboBox<RecordType> typeComboBox = new JComboBox<>();
         typeComboBox.addItem(RecordType.SALARY);
@@ -76,6 +85,7 @@ public class MainWindow {
         typeComboBox.addItem(RecordType.SUPPLIES);
         typeComboBox.addItem(RecordType.EMERGENCY);
         typeColumn.setCellEditor(new DefaultCellEditor(typeComboBox));
+
         recordsTable.setBorder(new EmptyBorder(5,5,5,5));
 
         contentPane = new JPanel();
@@ -88,8 +98,14 @@ public class MainWindow {
         return recordsTable;
     }
 
+    public RecordTableModel getRecordsTableModel() {
+        return tableModel;
+    }
+
     public static void main(String[] Args)
     {
+        ImageIcon logo = new ImageIcon("plogo2.png");
+
         JFrame frame = new JFrame("Simple Budgeter");
         MainWindow gui = new MainWindow();
         frame.setContentPane(gui.contentPane);
@@ -99,6 +115,7 @@ public class MainWindow {
         frame.setLocationRelativeTo(null);
         frame.setSize(800,600);
         frame.setMinimumSize(new Dimension (800, 600));
+        frame.setIconImage(logo.getImage());
         frame.setVisible(true);
     }
 

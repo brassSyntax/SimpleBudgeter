@@ -1,6 +1,7 @@
 package Record;
 
 public enum RecordType {
+    UNDEFINED   (0),
     SALARY      (1),
     INSURANCE   (1),
     TAXES       (-1),

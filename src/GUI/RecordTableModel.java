@@ -13,13 +13,16 @@ public class RecordTableModel extends AbstractTableModel{
     private ArrayList<Record> Records;
 
     public RecordTableModel() {
-        Records = new ArrayList<Record>();
-//        Records.add(new Record("test", LocalDate.parse("2017-12-22"), RecordType.SAVINGS, 300));
+        this.Records = new ArrayList<Record>();
     }
 
     public RecordTableModel(ArrayList<Record> Records)
     {
         this.Records = Records;
+    }
+
+    public ArrayList<Record> getRecords() {
+        return Records;
     }
 
     @Override
@@ -80,6 +83,10 @@ public class RecordTableModel extends AbstractTableModel{
 
     public void addRecord()
     {
-        Records.add(new Record());
+        int rowCount = getRowCount();
+
+        Records.add(new Record("", LocalDate.now(), RecordType.UNDEFINED,0));
+
+        fireTableRowsInserted(rowCount,rowCount);
     }
 }

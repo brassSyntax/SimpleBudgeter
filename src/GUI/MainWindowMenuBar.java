@@ -4,10 +4,12 @@ import Record.RecordFormatter;
 import Record.RecordTableReader;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class MainWindowMenuBar extends JMenuBar{
@@ -17,6 +19,7 @@ public class MainWindowMenuBar extends JMenuBar{
     private JMenu       fileMenu;
     private JMenuItem   newBudgetItem;
     private JMenuItem   loadBudgetItem;
+    private JMenuItem   saveBudgetItem;
 
     private JMenu       statsMenu;
     private JMenuItem   showStatsItem;
@@ -30,6 +33,7 @@ public class MainWindowMenuBar extends JMenuBar{
         fileMenu = new JMenu("File");
         newBudgetItem = new JMenuItem("New Budget");
         loadBudgetItem = new JMenuItem("Load Budget");
+        saveBudgetItem = new JMenuItem("Save As...");
 
         statsMenu = new JMenu("Statistics");
         showStatsItem = new JMenuItem("Show Statistics");
@@ -39,6 +43,7 @@ public class MainWindowMenuBar extends JMenuBar{
 
         fileMenu.add(newBudgetItem);
         fileMenu.add(loadBudgetItem);
+        fileMenu.add(saveBudgetItem);
 
         statsMenu.add(showStatsItem);
 
@@ -77,6 +82,32 @@ public class MainWindowMenuBar extends JMenuBar{
                         target.getRecordsTable().setModel(model);
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(fileMenu, "Test");
+                    }
+                }
+            }
+        });
+
+        this.saveBudgetItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final JFileChooser fc = new JFileChooser();
+                fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
+                fc.setDialogType(JFileChooser.SAVE_DIALOG);
+                fc.setFileFilter(new FileNameExtensionFilter("Text File","txt"));
+
+                int returnVal = fc.showSaveDialog(MainWindowMenuBar.this);
+
+                if(returnVal == JFileChooser.APPROVE_OPTION)
+                {
+                    try
+                    {
+                        FileWriter fileWriter = new FileWriter(fc.getSelectedFile()+".txt");
+                        fileWriter.write(RecordFormatter.toString(target.getRecordsTableModel().getRecords()));
+                        fileWriter.close();
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.printStackTrace();
                     }
                 }
             }
