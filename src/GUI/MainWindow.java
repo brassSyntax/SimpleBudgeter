@@ -67,26 +67,13 @@ public class MainWindow {
         buttonPane.setBorder(new EmptyBorder(20,20,20,20));
 
         tableModel = new RecordTableModel();
+
         recordsTable = new JTable(tableModel);
         recordsTable.setDefaultEditor(LocalDate.class, new DateTableEditor());
         recordsTable.setDefaultRenderer(LocalDate.class, new DateTableEditor());
-
-        TableColumn dateColumn = recordsTable.getColumnModel().getColumn(1);
-        dateColumn.setCellEditor(recordsTable.getDefaultEditor(LocalDate.class));
-        dateColumn.setCellRenderer(recordsTable.getDefaultRenderer(LocalDate.class));
-
-        TableColumn typeColumn = recordsTable.getColumnModel().getColumn(2);
-        JComboBox<RecordType> typeComboBox = new JComboBox<>();
-        typeComboBox.addItem(RecordType.SALARY);
-        typeComboBox.addItem(RecordType.INSURANCE);
-        typeComboBox.addItem(RecordType.TAXES);
-        typeComboBox.addItem(RecordType.LEISURE);
-        typeComboBox.addItem(RecordType.SAVINGS);
-        typeComboBox.addItem(RecordType.SUPPLIES);
-        typeComboBox.addItem(RecordType.EMERGENCY);
-        typeColumn.setCellEditor(new DefaultCellEditor(typeComboBox));
-
         recordsTable.setBorder(new EmptyBorder(5,5,5,5));
+
+        setupColumns();
 
         contentPane = new JPanel();
         contentPane.setLayout(new BoxLayout(contentPane,BoxLayout.PAGE_AXIS));
@@ -94,12 +81,15 @@ public class MainWindow {
         contentPane.add(new JScrollPane(recordsTable));
     }
 
-    public JTable getRecordsTable() {
-        return recordsTable;
-    }
-
     public RecordTableModel getRecordsTableModel() {
         return tableModel;
+    }
+
+    public void setRecordsTableModel(RecordTableModel model)
+    {
+        this.recordsTable.setModel(model);
+        this.tableModel = model;
+        setupColumns();
     }
 
     public static void main(String[] Args)
@@ -119,8 +109,7 @@ public class MainWindow {
         frame.setVisible(true);
     }
 
-    public void setupListeners()
-    {
+    public void setupListeners() {
         createRecordBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -128,5 +117,24 @@ public class MainWindow {
 
             }
         });
+    }
+
+    private void setupColumns() {
+        // Needs to be called again when new TableModel is set, but might be redundant with custom TableColumnModel??
+
+        TableColumn dateColumn = recordsTable.getColumnModel().getColumn(1);
+        dateColumn.setCellEditor(recordsTable.getDefaultEditor(LocalDate.class));
+        dateColumn.setCellRenderer(recordsTable.getDefaultRenderer(LocalDate.class));
+
+        TableColumn typeColumn = recordsTable.getColumnModel().getColumn(2);
+        JComboBox<RecordType> typeComboBox = new JComboBox<>();
+        typeComboBox.addItem(RecordType.SALARY);
+        typeComboBox.addItem(RecordType.INSURANCE);
+        typeComboBox.addItem(RecordType.TAXES);
+        typeComboBox.addItem(RecordType.LEISURE);
+        typeComboBox.addItem(RecordType.SAVINGS);
+        typeComboBox.addItem(RecordType.SUPPLIES);
+        typeComboBox.addItem(RecordType.EMERGENCY);
+        typeColumn.setCellEditor(new DefaultCellEditor(typeComboBox));
     }
 }

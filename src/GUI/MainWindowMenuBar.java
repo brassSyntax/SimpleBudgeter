@@ -60,7 +60,7 @@ public class MainWindowMenuBar extends JMenuBar{
         this.newBudgetItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                target.getRecordsTable().setModel(new RecordTableModel());
+                target.setRecordsTableModel(new RecordTableModel());
             }
         });
 
@@ -79,7 +79,7 @@ public class MainWindowMenuBar extends JMenuBar{
 
                     try {
                         model = new RecordTableModel(RecordFormatter.toRecordObjects(RecordTableReader.getInstance().readFile(file)));
-                        target.getRecordsTable().setModel(model);
+                        target.setRecordsTableModel(model);
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(fileMenu, "Test");
                     }
