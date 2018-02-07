@@ -4,16 +4,22 @@ import Record.RecordType;
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.tableeditors.DateTableEditor;
+import javafx.scene.control.TableRow;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.util.Date;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.ZoneId;
 
 public class MainWindow {
 
@@ -72,8 +78,10 @@ public class MainWindow {
         recordsTable.setDefaultEditor(LocalDate.class, new DateTableEditor());
         recordsTable.setDefaultRenderer(LocalDate.class, new DateTableEditor());
         recordsTable.setBorder(new EmptyBorder(5,5,5,5));
+        recordsTable.getTableHeader().setReorderingAllowed(false);
 
         setupColumns();
+        setupSorter();
 
         contentPane = new JPanel();
         contentPane.setLayout(new BoxLayout(contentPane,BoxLayout.PAGE_AXIS));
@@ -90,6 +98,7 @@ public class MainWindow {
         this.recordsTable.setModel(model);
         this.tableModel = model;
         setupColumns();
+        setupSorter();
     }
 
     public static void main(String[] Args)
@@ -136,5 +145,24 @@ public class MainWindow {
         typeComboBox.addItem(RecordType.SUPPLIES);
         typeComboBox.addItem(RecordType.EMERGENCY);
         typeColumn.setCellEditor(new DefaultCellEditor(typeComboBox));
+    }
+
+    private void setupSorter() {
+
+        TableRowSorter<RecordTableModel> sorter = new TableRowSorter<>(tableModel);
+        sorter.setSortsOnUpdates(true);
+
+        RowFilter<RecordTableModel,Integer> filter = new RowFilter<RecordTableModel, Integer>() {
+            @Override
+            public boolean include(Entry<? extends RecordTableModel, ? extends Integer> entry) {
+                int modelRow = entry.getIdentifier();
+                LocalDate date = (LocalDate) entry.getModel().getValueAt(modelRow,1);
+
+                return date.isEqual(LocalDate.now());
+            }
+        };
+
+        sorter.setRowFilter(filter);
+        recordsTable.setRowSorter(sorter);
     }
 }

@@ -14,6 +14,10 @@ public class RecordTableModel extends AbstractTableModel{
 
     public RecordTableModel() {
         this.Records = new ArrayList<Record>();
+        Record rec = new Record("test", LocalDate.now(), RecordType.SALARY, 1232.);
+        Records.add(rec);
+
+        //TODO: fix out of bounds exception when starting with an empty model
     }
 
     public RecordTableModel(ArrayList<Record> Records)
