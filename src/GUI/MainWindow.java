@@ -3,7 +3,9 @@ package GUI;
 import Record.RecordType;
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
+import com.github.lgooddatepicker.optionalusertools.DateChangeListener;
 import com.github.lgooddatepicker.tableeditors.DateTableEditor;
+import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -115,7 +117,20 @@ public class MainWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 tableModel.addRecord();
+            }
+        });
 
+        fromDatePicker.addDateChangeListener(new DateChangeListener() {
+            @Override
+            public void dateChanged(DateChangeEvent dateChangeEvent) {
+                recordsTable.getRowSorter().rowsUpdated(0,tableModel.getRowCount() - 1);
+            }
+        });
+
+        untilDatePicker.addDateChangeListener(new DateChangeListener() {
+            @Override
+            public void dateChanged(DateChangeEvent dateChangeEvent) {
+                recordsTable.getRowSorter().rowsUpdated(0,tableModel.getRowCount() - 1);
             }
         });
     }
@@ -158,12 +173,27 @@ public class MainWindow {
         sorter.setComparator(1,localDateComparator);*/
 
         RowFilter<RecordTableModel, Integer> filter = new RowFilter<RecordTableModel, Integer>() {
+            @SuppressWarnings({"ConstantConditions", "SimplifiableIfStatement"})
             @Override
             public boolean include(Entry<? extends RecordTableModel, ? extends Integer> entry) {
                 int modelRow = entry.getIdentifier();
-                LocalDate date = (LocalDate) entry.getModel().getValueAt(modelRow, 1);
+                LocalDate entryDate = (LocalDate) entry.getModel().getValueAt(modelRow, 1);
+                LocalDate fromDate = fromDatePicker.getDate();
+                LocalDate untilDate = untilDatePicker.getDate();
 
-                return date.isEqual(LocalDate.now());
+                if(fromDate != null && untilDate == null)
+                {
+                    return entryDate.compareTo(fromDate) >= 0;
+                }
+                else if(fromDate == null && untilDate != null)
+                {
+                    return entryDate.compareTo(untilDate) < 0;
+                }
+                else if(fromDate != null && untilDate != null)
+                {
+                    return (entryDate.compareTo(fromDate) >= 0) && (entryDate.compareTo(untilDate) < 0);
+                }
+                else return true;
             }
         };
 
