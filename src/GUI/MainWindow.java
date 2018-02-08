@@ -4,22 +4,16 @@ import Record.RecordType;
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.tableeditors.DateTableEditor;
-import javafx.scene.control.TableRow;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import java.util.Date;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.ZoneId;
 
 public class MainWindow {
 
@@ -62,7 +56,7 @@ public class MainWindow {
         buttonPane.add(createRecordBtn);
         buttonPane.add(Box.createHorizontalGlue());
         buttonPane.add(fromLabel);
-        buttonPane.add(Box.createRigidArea(new Dimension(5,0)));
+        buttonPane.add(Box.createRigidArea(new Dimension(5, 0)));
         buttonPane.add(fromDatePicker);
         buttonPane.add(Box.createRigidArea(new Dimension(10, 0)));
         buttonPane.add(untilLabel);
@@ -70,21 +64,21 @@ public class MainWindow {
         buttonPane.add(untilDatePicker);
         buttonPane.add(Box.createHorizontalGlue());
         buttonPane.add(balanceLabel);
-        buttonPane.setBorder(new EmptyBorder(20,20,20,20));
+        buttonPane.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         tableModel = new RecordTableModel();
 
         recordsTable = new JTable(tableModel);
         recordsTable.setDefaultEditor(LocalDate.class, new DateTableEditor());
         recordsTable.setDefaultRenderer(LocalDate.class, new DateTableEditor());
-        recordsTable.setBorder(new EmptyBorder(5,5,5,5));
+        recordsTable.setBorder(new EmptyBorder(5, 5, 5, 5));
         recordsTable.getTableHeader().setReorderingAllowed(false);
 
         setupColumns();
         setupSorter();
 
         contentPane = new JPanel();
-        contentPane.setLayout(new BoxLayout(contentPane,BoxLayout.PAGE_AXIS));
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
         contentPane.add(buttonPane);
         contentPane.add(new JScrollPane(recordsTable));
     }
@@ -93,16 +87,14 @@ public class MainWindow {
         return tableModel;
     }
 
-    public void setRecordsTableModel(RecordTableModel model)
-    {
+    public void setRecordsTableModel(RecordTableModel model) {
         this.recordsTable.setModel(model);
         this.tableModel = model;
         setupColumns();
         setupSorter();
     }
 
-    public static void main(String[] Args)
-    {
+    public static void main(String[] Args) {
         ImageIcon logo = new ImageIcon("plogo2.png");
 
         JFrame frame = new JFrame("Simple Budgeter");
@@ -112,8 +104,8 @@ public class MainWindow {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
-        frame.setSize(800,600);
-        frame.setMinimumSize(new Dimension (800, 600));
+        frame.setSize(800, 600);
+        frame.setMinimumSize(new Dimension(800, 600));
         frame.setIconImage(logo.getImage());
         frame.setVisible(true);
     }
@@ -152,11 +144,24 @@ public class MainWindow {
         TableRowSorter<RecordTableModel> sorter = new TableRowSorter<>(tableModel);
         sorter.setSortsOnUpdates(true);
 
-        RowFilter<RecordTableModel,Integer> filter = new RowFilter<RecordTableModel, Integer>() {
+        // Not sure if explicit Comparator is useful here or not
+
+        /*Comparator<LocalDate> localDateComparator = new Comparator<LocalDate>() {
+            @Override
+            public int compare(LocalDate o1, LocalDate o2) {
+                if(o1.isBefore(o2)) return -1;
+                else if(o1.isEqual(o2)) return 0;
+                else return 1;
+            }
+        };
+
+        sorter.setComparator(1,localDateComparator);*/
+
+        RowFilter<RecordTableModel, Integer> filter = new RowFilter<RecordTableModel, Integer>() {
             @Override
             public boolean include(Entry<? extends RecordTableModel, ? extends Integer> entry) {
                 int modelRow = entry.getIdentifier();
-                LocalDate date = (LocalDate) entry.getModel().getValueAt(modelRow,1);
+                LocalDate date = (LocalDate) entry.getModel().getValueAt(modelRow, 1);
 
                 return date.isEqual(LocalDate.now());
             }

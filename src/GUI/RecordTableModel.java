@@ -14,10 +14,6 @@ public class RecordTableModel extends AbstractTableModel{
 
     public RecordTableModel() {
         this.Records = new ArrayList<Record>();
-        Record rec = new Record("test", LocalDate.now(), RecordType.SALARY, 1232.);
-        Records.add(rec);
-
-        //TODO: fix out of bounds exception when starting with an empty model
     }
 
     public RecordTableModel(ArrayList<Record> Records)
@@ -46,14 +42,18 @@ public class RecordTableModel extends AbstractTableModel{
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Record record = Records.get(rowIndex);
+        try {
+            Record record = Records.get(rowIndex);
 
-        switch (columnIndex) {
-            case 0: return record.getName();
-            case 1: return record.getDate();
-            case 2: return record.getType();
-            case 3: return record.getAmount();
-            default:return null;
+            switch (columnIndex) {
+                case 0: return record.getName();
+                case 1: return record.getDate();
+                case 2: return record.getType();
+                case 3: return record.getAmount();
+                default:return null;
+            }
+        } catch (IndexOutOfBoundsException e) {
+            return null;
         }
     }
 
@@ -77,7 +77,10 @@ public class RecordTableModel extends AbstractTableModel{
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return getValueAt(0,columnIndex).getClass();
+        if (Records.size() > 0) {
+            return getValueAt(0,columnIndex).getClass();
+        }
+        else return Object.class;
     }
 
     @Override
