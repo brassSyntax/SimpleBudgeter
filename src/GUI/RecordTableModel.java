@@ -6,6 +6,8 @@ import Record.RecordType;
 import javax.swing.table.AbstractTableModel;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 public class RecordTableModel extends AbstractTableModel{
 
@@ -95,5 +97,17 @@ public class RecordTableModel extends AbstractTableModel{
         Records.add(new Record("", LocalDate.now(), RecordType.UNDEFINED,0));
 
         fireTableRowsInserted(rowCount,rowCount);
+    }
+
+    public void removeRecords(int[] Selection)
+    {
+        if (Selection.length > 0) {
+            for(int i = 0; i < Selection.length; i++)
+            {
+                Records.remove(Selection[i] - i);
+            }
+
+            fireTableRowsDeleted(Selection[0], Selection[Selection.length - 1]);
+        }
     }
 }

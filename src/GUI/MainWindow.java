@@ -14,8 +14,11 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.Arrays;
 
 public class MainWindow {
 
@@ -51,8 +54,6 @@ public class MainWindow {
         fromDatePicker.setSettings(fromDateSettings);
         untilDatePicker.setSettings(untilDateSettings);
 
-        setupListeners();
-
         buttonPane = new JPanel();
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
         buttonPane.add(createRecordBtn);
@@ -76,6 +77,7 @@ public class MainWindow {
         recordsTable.setBorder(new EmptyBorder(5, 5, 5, 5));
         recordsTable.getTableHeader().setReorderingAllowed(false);
 
+        setupListeners();
         setupColumns();
         setupSorter();
 
@@ -133,6 +135,27 @@ public class MainWindow {
                 recordsTable.getRowSorter().rowsUpdated(0,tableModel.getRowCount() - 1);
             }
         });
+
+        recordsTable.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_DELETE)
+                {
+                    tableModel.removeRecords(recordsTable.getSelectedRows());
+
+                    // TODO: touchup selection and conflicting DELETE keys
+                }
+            }
+        });
     }
 
     private void setupColumns() {
@@ -178,6 +201,9 @@ public class MainWindow {
             public boolean include(Entry<? extends RecordTableModel, ? extends Integer> entry) {
                 int modelRow = entry.getIdentifier();
                 LocalDate entryDate = (LocalDate) entry.getModel().getValueAt(modelRow, 1);
+
+                if(entryDate == null) return true;
+
                 LocalDate fromDate = fromDatePicker.getDate();
                 LocalDate untilDate = untilDatePicker.getDate();
 
