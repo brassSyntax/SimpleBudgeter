@@ -9,43 +9,56 @@ import com.github.lgooddatepicker.zinternaltools.DateChangeEvent;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.text.NumberFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.Locale;
 
 public class MainWindow {
 
     private JPanel contentPane;
     private JPanel buttonPane;
-    private JPanel listPane;
     private JButton createRecordBtn;
     private DatePicker fromDatePicker;
     private DatePicker untilDatePicker;
     private JLabel fromLabel;
     private JLabel untilLabel;
     private JLabel balanceLabel;
-    private JLabel periodBalance;
+    private JFormattedTextField periodBalance;
     private JTable recordsTable;
 
     private RecordTableModel tableModel;
+
+    public final static Color POSITIVE = new Color(0,153,0);
+    public final static Color NEUTRAL = new Color(55, 55, 55);
+    public final static Color NEGATIVE = new Color(255,0,0);
 
 
     public MainWindow() {
         createRecordBtn = new JButton("New Record");
         fromLabel = new JLabel("From:");
+        fromLabel.setLabelFor(fromDatePicker);
         fromDatePicker = new DatePicker();
         fromDatePicker.setMaximumSize(new Dimension(155, 24));
         untilLabel = new JLabel("Until:");
+        untilLabel.setLabelFor(untilDatePicker);
         untilDatePicker = new DatePicker();
         untilDatePicker.setMaximumSize(new Dimension(155, 24));
         balanceLabel = new JLabel("Period Net Change:");
+        balanceLabel.setLabelFor(periodBalance);
+
+        periodBalance = new JFormattedTextField(NumberFormat.getCurrencyInstance(Locale.GERMANY));
+        periodBalance.setEditable(false);
+        periodBalance.setColumns(6);
+        periodBalance.setForeground(NEUTRAL);
+        periodBalance.setMaximumSize(new Dimension(2000,20));
 
         DatePickerSettings fromDateSettings = new DatePickerSettings();
         DatePickerSettings untilDateSettings = new DatePickerSettings();
@@ -67,19 +80,25 @@ public class MainWindow {
         buttonPane.add(untilDatePicker);
         buttonPane.add(Box.createHorizontalGlue());
         buttonPane.add(balanceLabel);
+        buttonPane.add(Box.createRigidArea(new Dimension(5, 0)));
+        buttonPane.add(periodBalance);
         buttonPane.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         tableModel = new RecordTableModel();
 
+        DateTableEditor dateTableEditor = new DateTableEditor();
+        dateTableEditor.getDatePickerSettings().setAllowKeyboardEditing(false);
+
         recordsTable = new JTable(tableModel);
-        recordsTable.setDefaultEditor(LocalDate.class, new DateTableEditor());
+        recordsTable.setDefaultEditor(LocalDate.class, dateTableEditor);
         recordsTable.setDefaultRenderer(LocalDate.class, new DateTableEditor());
         recordsTable.setBorder(new EmptyBorder(5, 5, 5, 5));
         recordsTable.getTableHeader().setReorderingAllowed(false);
 
-        setupListeners();
+        setupKeybindings();
         setupColumns();
         setupSorter();
+        setupListeners();
 
         contentPane = new JPanel();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
@@ -92,6 +111,9 @@ public class MainWindow {
     }
 
     public void setRecordsTableModel(RecordTableModel model) {
+        fromDatePicker.clear();
+        untilDatePicker.clear();
+
         this.recordsTable.setModel(model);
         this.tableModel = model;
         setupColumns();
@@ -136,26 +158,21 @@ public class MainWindow {
             }
         });
 
-        recordsTable.addKeyListener(new KeyListener() {
+        // RowSorterListener moved to setupSorter()
+    }
+
+    private void setupKeybindings()
+    {
+        class DeleteRowsAction extends AbstractAction
+        {
             @Override
-            public void keyTyped(KeyEvent e) {
+            public void actionPerformed(ActionEvent e) {
+                tableModel.removeRecords(recordsTable.getSelectedRows());
             }
+        }
 
-            @Override
-            public void keyPressed(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                if(e.getKeyCode() == KeyEvent.VK_DELETE)
-                {
-                    tableModel.removeRecords(recordsTable.getSelectedRows());
-
-                    // TODO: touchup selection and conflicting DELETE keys
-                }
-            }
-        });
+        recordsTable.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke("DELETE"),"deleteRow");
+        recordsTable.getActionMap().put("deleteRow", new DeleteRowsAction());
     }
 
     private void setupColumns() {
@@ -179,8 +196,46 @@ public class MainWindow {
 
     private void setupSorter() {
 
-        TableRowSorter<RecordTableModel> sorter = new TableRowSorter<>(tableModel);
-        sorter.setSortsOnUpdates(true);
+        TableRowSorter<RecordTableModel> tableSorter = new TableRowSorter<>(tableModel);
+        tableSorter.setSortsOnUpdates(true);
+
+        tableSorter.addRowSorterListener(new RowSorterListener() {
+            @Override
+            public void sorterChanged(RowSorterEvent e) {
+
+                // Table view's balance sum and color marking
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        double balance = 0.;
+
+                        int rc = recordsTable.getRowCount();
+
+                        if (rc > 0) {
+                            for(int i = 0; i < rc; i++)
+                            {
+                                double value = (double) recordsTable.getValueAt(i,3);
+                                RecordType type = (RecordType) recordsTable.getValueAt(i,2);
+
+                                balance += value * type.sign;
+                            }
+
+                            if(balance > 0)
+                            {
+                                periodBalance.setForeground(POSITIVE);
+                            }
+                            else if(balance < 0)
+                            {
+                                periodBalance.setForeground(NEGATIVE);
+                            }
+                            else periodBalance.setForeground(NEUTRAL);
+
+                            periodBalance.setValue(balance);
+                        }
+                        else periodBalance.setText("");
+                    }
+                });
+            }
+        });
 
         // Not sure if explicit Comparator is useful here or not
 
@@ -193,7 +248,7 @@ public class MainWindow {
             }
         };
 
-        sorter.setComparator(1,localDateComparator);*/
+        tableSorter.setComparator(1,localDateComparator);*/
 
         RowFilter<RecordTableModel, Integer> filter = new RowFilter<RecordTableModel, Integer>() {
             @SuppressWarnings({"ConstantConditions", "SimplifiableIfStatement"})
@@ -201,6 +256,8 @@ public class MainWindow {
             public boolean include(Entry<? extends RecordTableModel, ? extends Integer> entry) {
                 int modelRow = entry.getIdentifier();
                 LocalDate entryDate = (LocalDate) entry.getModel().getValueAt(modelRow, 1);
+
+                // TODO: setup date VETO policies
 
                 if(entryDate == null) return true;
 
@@ -223,7 +280,7 @@ public class MainWindow {
             }
         };
 
-        sorter.setRowFilter(filter);
-        recordsTable.setRowSorter(sorter);
+        tableSorter.setRowFilter(filter);
+        recordsTable.setRowSorter(tableSorter);
     }
 }

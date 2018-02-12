@@ -97,6 +97,8 @@ public class MainWindowMenuBar extends JMenuBar{
                 fc.setDialogType(JFileChooser.SAVE_DIALOG);
                 fc.setFileFilter(new FileNameExtensionFilter("Text File","txt"));
 
+                // TODO: change .txt to .sb maybe?
+
                 int returnVal = fc.showSaveDialog(MainWindowMenuBar.this);
 
                 if(returnVal == JFileChooser.APPROVE_OPTION)

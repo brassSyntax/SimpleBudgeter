@@ -6,8 +6,6 @@ import Record.RecordType;
 import javax.swing.table.AbstractTableModel;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 
 public class RecordTableModel extends AbstractTableModel{
 
@@ -55,6 +53,7 @@ public class RecordTableModel extends AbstractTableModel{
                 default:return null;
             }
         } catch (IndexOutOfBoundsException e) {
+            System.out.println(e.getMessage());
             return null;
         }
     }
