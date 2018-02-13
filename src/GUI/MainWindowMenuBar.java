@@ -4,6 +4,7 @@ import Record.RecordFormatter;
 import Record.RecordTableReader;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -11,6 +12,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class MainWindowMenuBar extends JMenuBar{
 
@@ -117,16 +120,52 @@ public class MainWindowMenuBar extends JMenuBar{
             }
         });
 
-        this.aboutItem.addActionListener(new ActionListener() {
+        this.showStatsItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFrame helpWindow = new JFrame("Help Window");
-                helpWindow.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                helpWindow.setSize(new Dimension(300, 200));
-                helpWindow.setVisible(true);
+                JDialog statsWindow = new JDialog(target.getFrame(), "Budget Statistics");
+                statsWindow.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                //statsWindow.setAlwaysOnTop(true);
+                statsWindow.setSize(new Dimension(300, 200));
+                statsWindow.setLocationRelativeTo(target.getFrame());
+                statsWindow.setVisible(true);
+                ((JPanel) statsWindow.getContentPane()).setBorder(new EmptyBorder(10,10,10,10));
+
+                statsWindow.getContentPane().setLayout(new BoxLayout(statsWindow.getContentPane(), BoxLayout.PAGE_AXIS));
+                JPanel panel = new JPanel();
+                panel.add(new JLabel("Total money gained from salary: "));
+                panel.add(Box.createHorizontalGlue());
+                JFormattedTextField totalSalary = newCurrencyField();
+
+                // TODO: finish this
+
+                panel.add(totalSalary);
+                panel.setLayout(new BoxLayout(panel,BoxLayout.LINE_AXIS));
+                statsWindow.add(panel);
             }
         });
 
+        this.aboutItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialog helpWindow = new JDialog(target.getFrame(), "Help Window");
+                helpWindow.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                helpWindow.setAlwaysOnTop(true);
+                helpWindow.setSize(new Dimension(300, 200));
+                helpWindow.setLocationRelativeTo(target.getFrame());
+                helpWindow.setVisible(true);
+            }
+        });
+    }
 
+    private JFormattedTextField newCurrencyField()
+    {
+        JFormattedTextField field = new JFormattedTextField(NumberFormat.getCurrencyInstance(Locale.GERMANY));
+        field.setMaximumSize(new Dimension(500,20));
+        field.setPreferredSize(new Dimension(500,20));
+        field.setHorizontalAlignment(SwingConstants.RIGHT);
+        field.setEditable(false);
+
+        return field;
     }
 }

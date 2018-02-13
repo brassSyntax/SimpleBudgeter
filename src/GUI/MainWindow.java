@@ -23,6 +23,7 @@ import java.util.Locale;
 
 public class MainWindow {
 
+    private JFrame frame;
     private JPanel contentPane;
     private JPanel buttonPane;
     private JButton createRecordBtn;
@@ -36,12 +37,16 @@ public class MainWindow {
 
     private RecordTableModel tableModel;
 
-    public final static Color POSITIVE = new Color(0,153,0);
-    public final static Color NEUTRAL = new Color(55, 55, 55);
-    public final static Color NEGATIVE = new Color(255,0,0);
+    private final static Color POSITIVE = new Color(0,153,0);
+    private final static Color NEUTRAL = new Color(55, 55, 55);
+    private final static Color NEGATIVE = new Color(255,0,0);
+
+    private final static String LOGO_PATH = "plogo2.png";
 
 
     public MainWindow() {
+        ImageIcon logo = new ImageIcon(LOGO_PATH);
+
         createRecordBtn = new JButton("New Record");
         fromLabel = new JLabel("From:");
         fromLabel.setLabelFor(fromDatePicker);
@@ -52,6 +57,7 @@ public class MainWindow {
         untilDatePicker = new DatePicker();
         untilDatePicker.setMaximumSize(new Dimension(155, 24));
         balanceLabel = new JLabel("Period Net Change:");
+        balanceLabel.setFont(new Font("Dialog", Font.PLAIN,12));
         balanceLabel.setLabelFor(periodBalance);
 
         periodBalance = new JFormattedTextField(NumberFormat.getCurrencyInstance(Locale.GERMANY));
@@ -104,6 +110,21 @@ public class MainWindow {
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
         contentPane.add(buttonPane);
         contentPane.add(new JScrollPane(recordsTable));
+
+        JFrame frame = new JFrame("Simple Budgeter");
+        frame.setContentPane(contentPane);
+        frame.setJMenuBar(new MainWindowMenuBar(this));
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.setMinimumSize(new Dimension(800, 600));
+        frame.setLocationRelativeTo(null);
+        frame.setIconImage(logo.getImage());
+        frame.setVisible(true);
+    }
+
+    public JFrame getFrame()
+    {
+        return this.frame;
     }
 
     public RecordTableModel getRecordsTableModel() {
@@ -121,19 +142,7 @@ public class MainWindow {
     }
 
     public static void main(String[] Args) {
-        ImageIcon logo = new ImageIcon("plogo2.png");
-
-        JFrame frame = new JFrame("Simple Budgeter");
-        MainWindow gui = new MainWindow();
-        frame.setContentPane(gui.contentPane);
-        frame.setJMenuBar(new MainWindowMenuBar(gui));
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setSize(800, 600);
-        frame.setMinimumSize(new Dimension(800, 600));
-        frame.setIconImage(logo.getImage());
-        frame.setVisible(true);
+        new MainWindow();
     }
 
     public void setupListeners() {
