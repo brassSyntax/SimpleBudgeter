@@ -10,11 +10,10 @@ public class Record {
     private RecordType type;
     private double amount;
 
-    public Record()
-    {
+    public Record() {
         this.name = "N/A";
         this.date = LocalDateTime.now().toLocalDate();
-        this.type = null;
+        this.type = RecordType.UNDEFINED;
         this.amount = 0.;
     }
 
@@ -55,5 +54,9 @@ public class Record {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public boolean isDefined() {
+        return !this.name.equals("") && this.date != null && this.type != RecordType.UNDEFINED && !(this.amount == 0);
     }
 }

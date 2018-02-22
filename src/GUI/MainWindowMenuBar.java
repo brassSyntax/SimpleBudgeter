@@ -12,24 +12,24 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
 
-public class MainWindowMenuBar extends JMenuBar{
+public class MainWindowMenuBar extends JMenuBar {
 
-    private MainWindow  target;
+    private MainWindow target;
 
-    private JMenu       fileMenu;
-    private JMenuItem   newBudgetItem;
-    private JMenuItem   loadBudgetItem;
-    private JMenuItem   saveBudgetItem;
+    private JMenu fileMenu;
+    private JMenuItem newBudgetItem;
+    private JMenuItem loadBudgetItem;
+    private JMenuItem saveBudgetItem;
 
-    private JMenu       statsMenu;
-    private JMenuItem   showStatsItem;
+    private JMenu statsMenu;
+    private JMenuItem showStatsItem;
 
-    private JMenu       helpMenu;
-    private JMenuItem   aboutItem;
+    private JMenu helpMenu;
+    private JMenuItem aboutItem;
+    private JMenuItem reportItem;
 
     public final static String HELP_PATH = "\\help.html";
 
@@ -46,6 +46,7 @@ public class MainWindowMenuBar extends JMenuBar{
 
         helpMenu = new JMenu("Help");
         aboutItem = new JMenuItem("About");
+        reportItem = new JMenuItem("Generate Report");
 
         fileMenu.add(newBudgetItem);
         fileMenu.add(loadBudgetItem);
@@ -54,6 +55,7 @@ public class MainWindowMenuBar extends JMenuBar{
         statsMenu.add(showStatsItem);
 
         helpMenu.add(aboutItem);
+        helpMenu.add(reportItem);
 
         setupListeners();
         this.add(fileMenu);
@@ -61,8 +63,7 @@ public class MainWindowMenuBar extends JMenuBar{
         this.add(helpMenu);
     }
 
-    private void setupListeners()
-    {
+    private void setupListeners() {
         this.newBudgetItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -81,8 +82,7 @@ public class MainWindowMenuBar extends JMenuBar{
                 int returnVal = fc.showOpenDialog(MainWindowMenuBar.this);
                 File file = fc.getSelectedFile();
 
-                if(returnVal == JFileChooser.APPROVE_OPTION)
-                {
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
                     RecordTableModel model;
 
                     try {
@@ -101,22 +101,18 @@ public class MainWindowMenuBar extends JMenuBar{
                 final JFileChooser fc = new JFileChooser();
                 fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
                 fc.setDialogType(JFileChooser.SAVE_DIALOG);
-                fc.setFileFilter(new FileNameExtensionFilter("Text File","txt"));
+                fc.setFileFilter(new FileNameExtensionFilter("Text File", "txt"));
 
                 // TODO: change .txt to .sb maybe?
 
                 int returnVal = fc.showSaveDialog(MainWindowMenuBar.this);
 
-                if(returnVal == JFileChooser.APPROVE_OPTION)
-                {
-                    try
-                    {
-                        FileWriter fileWriter = new FileWriter(fc.getSelectedFile()+".txt");
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        FileWriter fileWriter = new FileWriter(fc.getSelectedFile() + ".txt");
                         fileWriter.write(RecordFormatter.toString(target.getRecordsTableModel().getRecords()));
                         fileWriter.close();
-                    }
-                    catch (Exception ex)
-                    {
+                    } catch (Exception ex) {
                         ex.printStackTrace();
                     }
                 }
@@ -152,12 +148,19 @@ public class MainWindowMenuBar extends JMenuBar{
                     helpPane.setText("ERROR: MISSING HELP FILE");
                 }
 
-                helpPane.setBorder(new EmptyBorder(10,10,10,10));
+                helpPane.setBorder(new EmptyBorder(10, 10, 10, 10));
                 helpPane.setBackground(UIManager.getColor("Panel.background"));
                 helpPane.setEditable(false);
                 // this overrides forced Times New Roman on the pane to swing defaults?
                 helpPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
                 helpWindow.getContentPane().add(helpPane);
+            }
+        });
+
+        this.reportItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new BudgetReportWriter(target);
             }
         });
     }

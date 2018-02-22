@@ -8,10 +8,10 @@ public class RecordTableReader {
 
     private static RecordTableReader readerInstance = new RecordTableReader();
 
-    private RecordTableReader() {}
+    private RecordTableReader() {
+    }
 
-    public static RecordTableReader getInstance()
-    {
+    public static RecordTableReader getInstance() {
         return readerInstance;
     }
 

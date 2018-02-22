@@ -18,10 +18,10 @@ public class RecordFormatterTest {
 
         Record r = RecordFormatter.toRecordObjects(text).get(0);
 
-        Assert.assertEquals(r.getName(),str);
-        Assert.assertEquals(r.getDate(),date);
-        Assert.assertEquals(r.getType(),type);
-        Assert.assertEquals(r.getAmount(),amount,0.00001);
+        Assert.assertEquals(r.getName(), str);
+        Assert.assertEquals(r.getDate(), date);
+        Assert.assertEquals(r.getType(), type);
+        Assert.assertEquals(r.getAmount(), amount, 0.00001);
     }
 
 }
