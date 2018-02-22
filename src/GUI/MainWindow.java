@@ -157,8 +157,10 @@ public class MainWindow {
         fromDatePicker.addDateChangeListener(new DateChangeListener() {
             @Override
             public void dateChanged(DateChangeEvent dateChangeEvent) {
-                if (recordsTable.getRowCount() > 0) {
+
+                try {
                     recordsTable.getRowSorter().rowsUpdated(0,tableModel.getRowCount() - 1);
+                } catch (IndexOutOfBoundsException ignored) {
                 }
 
                 DatePickerSettings untilSettings;
@@ -178,8 +180,9 @@ public class MainWindow {
         untilDatePicker.addDateChangeListener(new DateChangeListener() {
             @Override
             public void dateChanged(DateChangeEvent dateChangeEvent) {
-                if (recordsTable.getRowCount() > 0) {
+                try {
                     recordsTable.getRowSorter().rowsUpdated(0,tableModel.getRowCount() - 1);
+                } catch (Exception ignored) {
                 }
 
                 DatePickerSettings fromSettings;
