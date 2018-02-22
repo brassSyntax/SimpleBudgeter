@@ -98,6 +98,7 @@ public class MainWindow {
         recordsTable = new JTable(tableModel);
         recordsTable.setDefaultEditor(LocalDate.class, dateTableEditor);
         recordsTable.setDefaultRenderer(LocalDate.class, new DateTableEditor());
+        recordsTable.setDefaultEditor(Double.class, new CurrencyCellEditor(new JFormattedTextField()));
         recordsTable.setBorder(new EmptyBorder(5, 5, 5, 5));
         recordsTable.getTableHeader().setReorderingAllowed(false);
 
@@ -111,7 +112,7 @@ public class MainWindow {
         contentPane.add(buttonPane);
         contentPane.add(new JScrollPane(recordsTable));
 
-        JFrame frame = new JFrame("Simple Budgeter");
+        frame = new JFrame("Simple Budgeter");
         frame.setContentPane(contentPane);
         frame.setJMenuBar(new MainWindowMenuBar(this));
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

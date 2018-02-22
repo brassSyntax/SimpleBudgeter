@@ -77,7 +77,7 @@ public class MainWindowMenuBar extends JMenuBar {
                 final JFileChooser fc = new JFileChooser();
                 fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
                 fc.setDialogType(JFileChooser.OPEN_DIALOG);
-                fc.setFileFilter(new FileNameExtensionFilter("Text File", "txt"));
+                fc.setFileFilter(new FileNameExtensionFilter("Simple Budget", "sb"));
 
                 int returnVal = fc.showOpenDialog(MainWindowMenuBar.this);
                 File file = fc.getSelectedFile();
@@ -101,15 +101,13 @@ public class MainWindowMenuBar extends JMenuBar {
                 final JFileChooser fc = new JFileChooser();
                 fc.setCurrentDirectory(new File(System.getProperty("user.dir")));
                 fc.setDialogType(JFileChooser.SAVE_DIALOG);
-                fc.setFileFilter(new FileNameExtensionFilter("Text File", "txt"));
-
-                // TODO: change .txt to .sb maybe?
+                fc.setFileFilter(new FileNameExtensionFilter("Simple Budget", "sb"));
 
                 int returnVal = fc.showSaveDialog(MainWindowMenuBar.this);
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     try {
-                        FileWriter fileWriter = new FileWriter(fc.getSelectedFile() + ".txt");
+                        FileWriter fileWriter = new FileWriter(fc.getSelectedFile() + ".sb");
                         fileWriter.write(RecordFormatter.toString(target.getRecordsTableModel().getRecords()));
                         fileWriter.close();
                     } catch (Exception ex) {
