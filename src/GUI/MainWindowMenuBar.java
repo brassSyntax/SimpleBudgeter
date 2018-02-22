@@ -4,6 +4,7 @@ import Record.RecordFormatter;
 import Record.RecordTableReader;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -11,6 +12,9 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Paths;
 
 public class MainWindowMenuBar extends JMenuBar{
 
@@ -26,6 +30,8 @@ public class MainWindowMenuBar extends JMenuBar{
 
     private JMenu       helpMenu;
     private JMenuItem   aboutItem;
+
+    public final static String HELP_PATH = "\\help.html";
 
     public MainWindowMenuBar(MainWindow target) {
         this.target = target;
@@ -130,9 +136,28 @@ public class MainWindowMenuBar extends JMenuBar{
                 JDialog helpWindow = new JDialog(target.getFrame(), "Help Window");
                 helpWindow.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 helpWindow.setAlwaysOnTop(true);
-                helpWindow.setSize(new Dimension(300, 200));
+                helpWindow.setSize(new Dimension(650, 250));
                 helpWindow.setLocationRelativeTo(target.getFrame());
                 helpWindow.setVisible(true);
+
+                JEditorPane helpPane;
+
+                try {
+                    URL helpURL = Paths.get(System.getProperty("user.dir") + HELP_PATH).toUri().toURL();
+                    helpPane = new JEditorPane(helpURL);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+
+                    helpPane = new JEditorPane();
+                    helpPane.setText("ERROR: MISSING HELP FILE");
+                }
+
+                helpPane.setBorder(new EmptyBorder(10,10,10,10));
+                helpPane.setBackground(UIManager.getColor("Panel.background"));
+                helpPane.setEditable(false);
+                // this overrides forced Times New Roman on the pane to swing defaults?
+                helpPane.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
+                helpWindow.getContentPane().add(helpPane);
             }
         });
     }
