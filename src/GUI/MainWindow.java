@@ -157,14 +157,42 @@ public class MainWindow {
         fromDatePicker.addDateChangeListener(new DateChangeListener() {
             @Override
             public void dateChanged(DateChangeEvent dateChangeEvent) {
-                recordsTable.getRowSorter().rowsUpdated(0,tableModel.getRowCount() - 1);
+                if (recordsTable.getRowCount() > 0) {
+                    recordsTable.getRowSorter().rowsUpdated(0,tableModel.getRowCount() - 1);
+                }
+
+                DatePickerSettings untilSettings;
+                untilSettings = untilDatePicker.getSettings();
+
+                if(fromDatePicker.getDate() == null)
+                {
+                    untilSettings.setDateRangeLimits(null,null);
+                }
+                else
+                {
+                    untilSettings.setDateRangeLimits(fromDatePicker.getDate().plusDays(1),null);
+                }
             }
         });
 
         untilDatePicker.addDateChangeListener(new DateChangeListener() {
             @Override
             public void dateChanged(DateChangeEvent dateChangeEvent) {
-                recordsTable.getRowSorter().rowsUpdated(0,tableModel.getRowCount() - 1);
+                if (recordsTable.getRowCount() > 0) {
+                    recordsTable.getRowSorter().rowsUpdated(0,tableModel.getRowCount() - 1);
+                }
+
+                DatePickerSettings fromSettings;
+                fromSettings = fromDatePicker.getSettings();
+
+                if(untilDatePicker.getDate() == null)
+                {
+                    fromSettings.setDateRangeLimits(null,null);
+                }
+                else
+                {
+                    fromSettings.setDateRangeLimits(null,untilDatePicker.getDate().minusDays(1));
+                }
             }
         });
 
@@ -266,8 +294,6 @@ public class MainWindow {
             public boolean include(Entry<? extends RecordTableModel, ? extends Integer> entry) {
                 int modelRow = entry.getIdentifier();
                 LocalDate entryDate = (LocalDate) entry.getModel().getValueAt(modelRow, 1);
-
-                // TODO: setup date VETO policies
 
                 if(entryDate == null) return true;
 

@@ -10,8 +10,6 @@ public enum RecordType {
     SUPPLIES    (-1),
     EMERGENCY   (-1);
 
-    // TODO: rearrange these so they're
-
     public final int sign;
 
     RecordType(int sign)
